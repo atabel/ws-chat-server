@@ -3,7 +3,7 @@ const url = require('url');
 const WebSocketServer = require('ws').Server;
 const createGoogleTokenVerifier = require('./google-auth/google-id-token-verifier');
 const SERVER_PORT = 8080;
-const GOOGLE_CLIENT_ID = '760217472722-50qk94j20guahf97sop1h74uvaovhl6i.apps.googleusercontent.com';
+const GOOGLE_CLIENT_ID = require('./config').GOOGLE_CLIENT_ID;
 
 const verifyAuthToken = createGoogleTokenVerifier({clientId: GOOGLE_CLIENT_ID});
 
