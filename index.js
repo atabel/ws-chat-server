@@ -1,9 +1,8 @@
-const http = require('http');
 const url = require('url');
 const WebSocketServer = require('ws').Server;
 const createGoogleTokenVerifier = require('./google-auth/google-id-token-verifier');
-const SERVER_PORT = 8080;
 const GOOGLE_CLIENT_ID = require('./config').GOOGLE_CLIENT_ID;
+const SERVER_PORT = process.env.PORT || 8080;
 
 const verifyAuthToken = createGoogleTokenVerifier({clientId: GOOGLE_CLIENT_ID});
 
@@ -44,11 +43,23 @@ const send = event => {
     });
 };
 
+const handleInServer = event => {
+    if (event.type === 'getUsers') {
+        users.forEach(user => {
+            send({type: 'user', sender: 'server', receiver: event.sender, payload: user});
+        });
+    }
+};
+
 const handleEvent = fromUser => eventJson => {
     const event = JSON.parse(eventJson);
     event.sender = fromUser.id;
     console.log(`< ${fromUser.email}`, event);
-    send(event);
+    if (event.receiver === 'server') {
+        handleInServer(event);
+    } else {
+        send(event);
+    }
 };
 
 wss.on('connection', ws => {
@@ -58,26 +69,5 @@ wss.on('connection', ws => {
 
     send({type: 'user', sender: user.id, receiver: 'all', payload: user});
 });
-
-http.createServer(function (req, res) {
-    // Set CORS headers
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Request-Method', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'OPTIONS, GET');
-    // res.setHeader('Access-Control-Allow-Headers', req.header.origin);
-    if (req.method === 'OPTIONS') {
-        res.writeHead(200);
-        res.end();
-        return;
-    }
-    const path = url.parse(req.url).pathname;
-    if (path === '/getUsers') {
-        res.writeHead(200, {'Content-Type': 'application/json'});
-        res.end(JSON.stringify({users}));
-    } else {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.end('not found :(');
-    }
-}).listen(8000);
 
 console.log('listening on port ', SERVER_PORT);
