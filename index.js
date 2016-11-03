@@ -73,7 +73,6 @@ http.createServer(function (req, res) {
     const path = url.parse(req.url).pathname;
     if (path === '/getUsers') {
         res.writeHead(200, {'Content-Type': 'application/json'});
-        console.log(req);
         res.end(JSON.stringify({users}));
     } else {
         res.writeHead(404, {'Content-Type': 'text/plain'});
