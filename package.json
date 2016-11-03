@@ -4,6 +4,9 @@
   "main": "index.js",
   "author": "atabel87@gmail.com",
   "license": "MIT",
+  "engines": {
+    "node": ">=6.0"
+  },
   "scripts": {
     "start": "pm2 start index.js --watch"
   },
