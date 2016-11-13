@@ -8,10 +8,15 @@
     "node": ">=6.0"
   },
   "scripts": {
-    "start": "pm2 start index.js --watch"
+    "start": "pm2 start index.js --watch",
+    "log": "pm2 log index"
   },
   "dependencies": {
+    "get-urls": "^5.0.1",
+    "md5": "^2.2.1",
+    "metaphor": "^3.8.1",
     "node-fetch": "^1.6.3",
+    "uuid": "^2.0.3",
     "ws": "^1.1.1"
   },
   "devDependencies": {
