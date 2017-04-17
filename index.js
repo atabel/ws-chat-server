@@ -12,14 +12,12 @@ const createUser = ({name, picture, given_name, email, family_name, sub}) => ({
     name: given_name,
     familyName: family_name,
     email,
-    id: sub
+    id: sub,
 });
 
-const getUsersList = () =>
-    wss.clients.map(({upgradeReq: {user}}) => user);
+const getUsersList = () => wss.clients.map(({upgradeReq: {user}}) => user);
 
-const isUserAlreadyLoggedIn = user =>
-    getUsersList().some(({id}) => id === user.id);
+const isUserAlreadyLoggedIn = user => getUsersList().some(({id}) => id === user.id);
 
 const wss = new WebSocketServer({
     port: SERVER_PORT,
@@ -29,34 +27,33 @@ const wss = new WebSocketServer({
             const userJson = decodeURIComponent(token.substr('BOT/'.length));
             console.log('register new bot: ', userJson);
             try {
-                const user = JSON.parse(userJson)
+                const user = JSON.parse(userJson);
                 info.req.user = user;
                 cb(true);
             } catch (e) {
                 cb(false, 401, 'Bad bot encoding');
             }
         } else {
-            verifyAuthToken(token).then(tokenInfo => {
-                const user = createUser(tokenInfo);
-                if (isUserAlreadyLoggedIn(user)) {
-                    cb(false, 401, `Unauthorized: already logged!`);
-                } else {
-                    info.req.user = user;
-                }
-                cb(true);
-            }).catch(e => {
-                cb(false, 401, `Unauthorized: ${e.message}`);
-            });
+            verifyAuthToken(token)
+                .then(tokenInfo => {
+                    const user = createUser(tokenInfo);
+                    if (isUserAlreadyLoggedIn(user)) {
+                        cb(false, 401, `Unauthorized: already logged!`);
+                    } else {
+                        info.req.user = user;
+                    }
+                    cb(true);
+                })
+                .catch(e => {
+                    cb(false, 401, `Unauthorized: ${e.message}`);
+                });
         }
     },
 });
 
-const plugins = [
-    require('./plugins/metadata-plugin'),
-];
+const plugins = [require('./plugins/metadata-plugin')];
 
-const applyPlugins = event =>
-    plugins.reduce((event, plugin) => Promise.resolve(plugin(event)), event);
+const applyPlugins = event => plugins.reduce((event, plugin) => Promise.resolve(plugin(event)), event);
 
 const send = event => {
     const {receiver, sender} = event;
@@ -92,14 +89,14 @@ const handleEvent = fromUser => eventJson => {
 const notyfyDisconnection = user => () => {
     console.log(`Offline: ${user.email} | #users: ${wss.clients.length}`);
     send({type: 'disconnect', sender: 'server', receiver: 'all', payload: user.id});
-}
+};
 
 wss.on('connection', ws => {
     const {user} = ws.upgradeReq;
     console.log(`Connect: ${user.email} | #users: ${wss.clients.length}`);
 
     ws.on('message', handleEvent(user));
-    ws.on('close', notyfyDisconnection(user))
+    ws.on('close', notyfyDisconnection(user));
 
     send({type: 'user', sender: user.id, receiver: 'all', payload: user});
 });

@@ -24,7 +24,7 @@ const fetchMetadata = url =>
 
 module.exports = fetchMetadata;
 
-const addMetadata = (event) => {
+const addMetadata = event => {
     if (event.type !== 'message') {
         return Promise.resolve(event);
     }
@@ -36,7 +36,7 @@ const addMetadata = (event) => {
     }
 
     return fetchMetadata(urls[0])
-        .then((media) => merge(event, {payload: merge(event.payload, {media})}))
+        .then(media => merge(event, {payload: merge(event.payload, {media})}))
         .catch(() => event);
 };
 

@@ -9,7 +9,12 @@
   },
   "scripts": {
     "start": "pm2 start index.js --watch",
-    "log": "pm2 log index"
+    "log": "pm2 log index",
+    "precommit": "lint-staged",
+    "pretty": "./node_modules/.bin/prettier --tab-width 4 --single-quote --trailing-comma es5 --bracket-spacing false --print-width 120 --write"
+  },
+  "lint-staged": {
+    "*.js": ["pretty", "git add"]
   },
   "dependencies": {
     "get-urls": "^5.0.1",
@@ -20,6 +25,9 @@
     "ws": "^1.1.1"
   },
   "devDependencies": {
-    "pm2": "^2.0.19"
+    "husky": "^0.13.3",
+    "lint-staged": "^3.4.0",
+    "pm2": "^2.0.19",
+    "prettier": "^1.1.0"
   }
 }

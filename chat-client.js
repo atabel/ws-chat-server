@@ -8,7 +8,7 @@ const PRODUCTION_CHAT_SERVER = 'wss://react-chat-server.herokuapp.com';
 const DEV_CHAT_SERVER = 'ws://localhost:8080';
 const chatServerUrl = dev ? DEV_CHAT_SERVER : PRODUCTION_CHAT_SERVER;
 
-const createClient = (token) => {
+const createClient = token => {
     let ws;
     const listeners = {};
 

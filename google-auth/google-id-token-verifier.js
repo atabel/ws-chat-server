@@ -1,12 +1,8 @@
 const fetch = require('node-fetch');
 
-const VALID_ISSUERS = [
-    'accounts.google.com',
-    'https://accounts.google.com',
-];
+const VALID_ISSUERS = ['accounts.google.com', 'https://accounts.google.com'];
 
-const isValidIssuer = issuer =>
-    VALID_ISSUERS.indexOf(issuer) >= 0;
+const isValidIssuer = issuer => VALID_ISSUERS.indexOf(issuer) >= 0;
 
 const verifyAuthToken = clientId => token => {
     if (!token) {
@@ -21,13 +17,13 @@ const verifyAuthToken = clientId => token => {
                     throw new Error('AuthError: Wrong issuer');
                 }
                 return tokenInfo;
-            }).catch(e => {
+            })
+            .catch(e => {
                 throw new Error('AuthError');
             });
     }
 };
 
-const createVerifier = ({clientId}) =>
-    verifyAuthToken(clientId)
+const createVerifier = ({clientId}) => verifyAuthToken(clientId);
 
 module.exports = createVerifier;
